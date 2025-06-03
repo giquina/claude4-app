@@ -23,7 +23,7 @@
         body: JSON.stringify({ prompt }),
       });
       const data = await res.json();
-      document.getElementById("response").textContent = data.completion || data.error;
+    document.getElementById("response").textContent = data.completion || data.error || JSON.stringify(data);
     };
   </script>
 </body>
