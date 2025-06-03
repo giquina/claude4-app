@@ -17,11 +17,12 @@ export default async function handler(req, res) {
     // 3) Call the Claude 4 API
     const anthropicRes = await fetch("https://api.anthropic.com/v1/complete", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // This pulls your Claude key from Vercel's environment variables
-        "x-api-key": process.env.CLAUDE_API_KEY
-      },
+  headers: {
+  "Content-Type": "application/json",
+  "x-api-key": process.env.CLAUDE_API_KEY,
+  "anthropic-version": "2023-06-01"
+},
+
       body: JSON.stringify({
         model: "claude-4",
         prompt: `\u0002human: ${prompt}\n\u0002assistant:`,
