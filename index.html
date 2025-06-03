@@ -1,0 +1,30 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Claude 4 Test</title>
+</head>
+<body>
+  <h1>Claude 4 Test</h1>
+  <textarea id="prompt" rows="4" cols="50" placeholder="Type your prompt…"></textarea>
+  <br />
+  <button id="send">Send to Claude 4</button>
+  <p><strong>Response:</strong></p>
+  <pre id="response"></pre>
+
+  <script>
+    document.getElementById("send").onclick = async () => {
+      const prompt = document.getElementById("prompt").value;
+      if (!prompt) return alert("Enter a prompt first");
+      const res = await fetch("/api/claude", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+      const data = await res.json();
+      document.getElementById("response").textContent = data.completion || data.error;
+    };
+  </script>
+</body>
+</html>
