@@ -1,30 +1,62 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>Claude 4 Test</title>
+  <title>AI Provider Switcher</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; }
+    label { display: block; margin: 1rem 0 0.5rem; }
+    select, textarea, button { width: 100%; font-size: 1rem; }
+    textarea { padding: 0.5rem; resize: vertical; }
+    button { padding: 0.75rem; margin-top: 0.5rem; }
+    pre { background: #f4f4f4; padding: 1rem; white-space: pre-wrap; word-break: break-word; }
+  </style>
 </head>
 <body>
-  <h1>Claude 4 Test</h1>
-  <textarea id="prompt" rows="4" cols="50" placeholder="Type your prompt…"></textarea>
-  <br />
-  <button id="send">Send to Claude 4</button>
-  <p><strong>Response:</strong></p>
-  <pre id="response"></pre>
+  <h1>AI Provider Switcher</h1>
+
+  <label for="provider">Choose a provider:</label>
+  <select id="provider">
+    <option value="chatgpt">ChatGPT (GPT-3.5-Turbo)</option>
+    <option value="claude">Claude 4</option>
+  </select>
+
+  <label for="prompt">Enter your prompt:</label>
+  <textarea id="prompt" rows="4" placeholder="Type your question here…" required></textarea>
+
+  <button id="send">Send to AI</button>
+
+  <h2>Response:</h2>
+  <pre id="response">---</pre>
 
   <script>
     document.getElementById("send").onclick = async () => {
-      const prompt = document.getElementById("prompt").value;
-      if (!prompt) return alert("Enter a prompt first");
-      const res = await fetch("/api/claude", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
-      });
-      const data = await res.json();
-    document.getElementById("response").textContent =
-  data.completion || (data.error && data.error.message) || JSON.stringify(data);
+      const provider = document.getElementById("provider").value;
+      const promptText = document.getElementById("prompt").value.trim();
+      if (!promptText) return alert("Please type a prompt first.");
+
+      // Choose the API route based on the selector
+      const apiRoute = provider === "chatgpt" ? "/api/chatgpt" : "/api/claude";
+
+      // Show a loading message
+      const respEl = document.getElementById("response");
+      respEl.textContent = "Loading…";
+
+      try {
+        const res = await fetch(apiRoute, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: promptText })
+        });
+        const data = await res.json();
+        if (data.error) {
+          respEl.textContent = JSON.stringify(data.error, null, 2);
+        } else {
+          respEl.textContent = data.completion || JSON.stringify(data, null, 2);
+        }
+      } catch (e) {
+        respEl.textContent = "Request failed: " + e.message;
+      }
     };
   </script>
 </body>
