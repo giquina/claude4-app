@@ -24,10 +24,14 @@ export default async function handler(req, res) {
 },
 
       body: JSON.stringify({
-        model: "claude-4",
-        prompt: `\u0002human: ${prompt}\n\u0002assistant:`,
-        max_tokens_to_sample: 300
-      })
+  model: "claude-4",
+  prompt: [
+    "\u0002system\u0002You are a helpful AI assistant.",   // REQUIRED system turn
+    `\u0002human\u0002${prompt}`,                          // user’s question
+    "\u0002assistant\u0002"                                // assistant’s turn
+  ].join("\n"),
+  max_tokens_to_sample: 300
+})
     });
 
     // 4) If Claude returns an error, forward it
